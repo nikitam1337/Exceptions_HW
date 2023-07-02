@@ -12,7 +12,7 @@ public class Task4 {
         try {
             nameMethod();
         } catch (Exception e) {
-            System.err.println("Пустыне строки вводить нельзя");
+            System.err.println("Пустые строки вводить нельзя!!! Перезапустите программу.");
         }
     }
 
