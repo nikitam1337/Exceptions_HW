@@ -5,24 +5,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Scanner;
-import java.util.Date;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            run();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        run();
     }
 
     public static void run() {
         String[] userData = getArrayFromString(getUserDataFromConsole());
-        System.out.println(Arrays.toString(userData));
 
+        boolean flag = false;
         try {
             isTheDataAmountCorrect(userData);
 
@@ -32,18 +25,20 @@ public class Main {
             isTheBirthdayCorrect(userData[3]);
             isThePhoneNumberCorrect(userData[4]);
             isTheGenderCorrect(userData[5]);
+            flag = true;
 
         } catch (RuntimeException e) {
-            // e.printStackTrace();
-            // System.out.println(e);
             System.out.println(e.getMessage());
         }
 
-        Human human = new Human(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5]);
-        System.out.println(human);
+        if (flag) {
+            Human human = new Human(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5]);
+            write(human, human.surname + ".txt");
+            System.out.println("Данные Пользователя: " + human + " Успешно сохранены");
 
-        // FileWriter writer = new FileWriter(new File(human.surname + ".txt"), true);
-        // write(human, human.surname + ".txt");
+        } else {
+            System.out.println("Что-то пошло не так. Разбёремся");
+        }
 
     }
 
@@ -54,7 +49,7 @@ public class Main {
                 "Имя\n" +
                 "Отчество\n" +
                 "Дата рождения (В формате: 01.01.1997)\n" +
-                "Номер телефона (В формате: 1234567)\n" +
+                "Номер телефона (В формате: 1234567 (7 цифры))\n" +
                 "Пол (В формате: символ латиницей f или m)\n" +
                 "А затем нажмите Enter.");
 
@@ -105,7 +100,7 @@ public class Main {
     }
 
     public static void isThePhoneNumberCorrect(String phoneNumber) throws RuntimeException {
-        if (phoneNumber.length() < 7) {
+        if (phoneNumber.length() <= 7) {
             try {
                 Integer.parseInt(phoneNumber);
             } catch (NumberFormatException e) {
@@ -123,13 +118,13 @@ public class Main {
     }
 
     private static void write(Human human, String path) {
-        File file = new File(path);
-        try {
-            FileWriter writer = new FileWriter(file, true);
+
+        try (FileWriter writer = new FileWriter(new File(path), true)) {
+            writer.write(human.toString());
+            writer.write("\n");
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
